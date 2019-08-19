@@ -4,7 +4,7 @@
           <div class="col-md-12">
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">Responsive Hover Table</h3>
+                <h3 class="card-title">User Table</h3>
 
                 <div class="card-tools">
                   <button class="btn btn-success" data-toggle="modal" data-target="#addNew">Add new 
@@ -35,7 +35,7 @@
                             <i class="fa fa-edit"></i>
                         </a>
                     /
-                         <a href="#">Delete 
+                         <a href="#" @click="deleteUser(user.id)">Delete 
                             <i class="fa fa-trash red"></i>
                         </a>
                     </td>
@@ -114,6 +114,7 @@
 </template>
 
 <script>
+import { setInterval } from 'timers';
     export default {
         data(){
             return{
@@ -132,10 +133,59 @@
         },
         methods:{
 
+          deleteUser(id){
+
+            Swal.fire({
+              title: 'Are you sure?',
+              text: "You won't be able to revert this!",
+              type: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+              // send ajax request to server
+              if (result.value){
+                this.form.delete('api/user/'+id).then(()=>{
+                    Swal.fire(
+                      'Deleted!',
+                      'Your file has been deleted.',
+                      'success'
+                    )
+                    fire.$emit('Cafter');
+
+                }).catch(()=>{
+                  swal("failed!", "Not sure why that happned.","warning");
+                });
+                 
+
+              }
+
+                
+            })
+
+          },
+
           addUser(){
             this.$Progress.start();
-             this.form.post('api/user');
-             this.$Progress.finish();
+             this.form.post('api/user')
+             .then(()=>{
+
+                 fire.$emit('Cafter');
+             $('#addNew').modal('hide');
+
+                          toast.fire({
+                type: 'success',
+                title: 'User successfully created'
+              })
+                    this.$Progress.finish();
+
+             })
+
+             .catch(()=>{
+
+             })
+           
           },
 
           loadUser(){
@@ -146,6 +196,8 @@
         },
         mounted() {
            this.loadUser();
+           fire.$on('Cafter',()=>{this.loadUser()});
+           //setInterval(()=>this.loadUser(),3000);
         }
     }
 </script>

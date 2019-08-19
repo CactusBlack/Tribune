@@ -9,6 +9,17 @@ require('./bootstrap');
 window.Vue = require('vue');
 import { Form, HasError, AlertError } from 'vform';
 
+import Swal from 'sweetalert2';
+window.Swal= Swal;
+
+const toast = Swal.mixin({
+  toast: true,
+  position: 'top-end',
+  showConfirmButton: false,
+  timer: 3000
+});
+window.toast = toast;
+
 window.Form = Form;
 import moment from 'moment'
 Vue.component(HasError.name, HasError)
@@ -65,6 +76,8 @@ Vue.filter('date',function(made){
 });
 // const files = require.context('./', true, /\.vue$/i);
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default));
+
+window.fire= new Vue();
 
 Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 //Vue.component('dashboard', require('./components/Dashboard.vue').default);
