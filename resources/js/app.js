@@ -30,6 +30,7 @@ Vue.use(VueRouter);
 
 import Dashboard from './components/Dashboard.vue';
 import Profile from './components/Profile.vue';
+import Developer from './components/Developer.vue';
 import Users from './components/Users.vue';
 import VueProgressBar from 'vue-progressbar';
 
@@ -43,7 +44,7 @@ Vue.use(VueProgressBar,{
     termination: 300
   },
   autoRevert: true,
-  location: 'left',
+  location: 'top',
   inverse: false
 })
 
@@ -62,7 +63,8 @@ const router = new VueRouter({
   routes: [
     { path: '/dashboard', component:Dashboard },
     { path: '/user', component:Profile },
-    { path: '/config', component:Users }
+    { path: '/config', component:Users },
+    { path: '/developer', component:Developer }
   ]
 });
 
@@ -78,6 +80,21 @@ Vue.filter('date',function(made){
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default));
 
 window.fire= new Vue();
+
+Vue.component(
+  'passport-clients',
+  require('./components/passport/Clients.vue').default
+);
+
+Vue.component(
+  'passport-authorized-clients',
+  require('./components/passport/AuthorizedClients.vue').default
+);
+
+Vue.component(
+  'passport-personal-access-tokens',
+  require('./components/passport/PersonalAccessTokens.vue').default
+);
 
 Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 //Vue.component('dashboard', require('./components/Dashboard.vue').default);

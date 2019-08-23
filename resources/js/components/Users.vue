@@ -7,7 +7,7 @@
                 <h3 class="card-title">User Table</h3>
 
                 <div class="card-tools">
-                  <button class="btn btn-success" data-toggle="modal" data-target="#addNew">Add new 
+                  <button class="btn btn-success" @click="openSaysme" >Add new 
                       <i class="fas fa-user-plus fa-fw"></i></button>
                 </div>
               </div>
@@ -31,7 +31,7 @@
                     <td>{{user.created_at|date}}</td>
                 
                     <td>
-                        <a href="#">Edit 
+                        <a href="#" @click="closeSaysme(user)">Edit 
                             <i class="fa fa-edit"></i>
                         </a>
                     /
@@ -54,12 +54,13 @@
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addNewLabel">Modal title</h5>
+                    <h5 class="modal-title" v-show="!editmode" id="addNewLabel">New User</h5>
+                    <h5 class="modal-title" v-show="editmode" id="addNewLabel">Edit details</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form @submit.prevent="addUser">
+                <form @submit.prevent="editmode ? updateUser():addUser()">
                 <div class="modal-body">
 
                     <div class="form-group">
@@ -104,7 +105,8 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Create</button>
+                    <button v-show="editmode" type="submit" class="btn btn-primary">Update</button>
+                    <button v-show="!editmode" type="submit" class="btn btn-primary">Create</button>
                 </div>
                 </form>
                 </div>
@@ -119,8 +121,10 @@ import { setInterval } from 'timers';
         data(){
             return{
               users:{},
+              editmode:false,
 
                 form: new Form({
+                  id:'',
                     name:'',
                     email:'',
                     password:'',
@@ -132,6 +136,42 @@ import { setInterval } from 'timers';
             }
         },
         methods:{
+
+          updateUser(){
+            this.$Progress.start();
+            this.form.put('api/user/'+ this.form.id)
+            .then(()=>{
+              $('#addNew').modal('hide');
+              Swal.fire(
+                      'Updated',
+                      'Information updated.',
+                      'success'
+                    )
+                    this.$Progress.finish();
+                    fire.$emit('Cafter');
+
+            })
+            .catch(()=>{
+              this.$Progress.fail();
+            });
+
+          },
+
+          openSaysme(){
+            this.form.reset();
+            $('#addNew').modal('show');
+            this.editmode= false;
+           
+
+          },
+
+           closeSaysme(user){
+            this.form.reset();
+            $('#addNew').modal('show');
+             this.form.fill(user);
+             this.editmode = true;
+
+          },
 
           deleteUser(id){
 

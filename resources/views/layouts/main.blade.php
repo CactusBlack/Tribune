@@ -94,12 +94,17 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 </router-link>
               </li>
               <li class="nav-item">
-                <a href="#" class="nav-link">
-                  <i class="fa fa-circle-o nav-icon"></i>
-                  <p>Inactive Page</p>
-                </a>
-              </li>
+              <router-link to="/developer" class="nav-link">
+                <i class=" nav-icon fab fa-connectdevelop purple"></i>
+                <p>
+                  Developer
+                  <!-- <span class="right badge badge-danger">New</span> -->
+                </p>
+              </router-link>
+           
             </ul>
+          </li>
+         
           </li>
           <li class="nav-item">
               <router-link to="/user" class="nav-link">
@@ -162,7 +167,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
       Anything you want
     </div>
     <!-- Default to the left -->
-    <strong>Copyright &copy; 2014-2018 <a href="https://adminlte.io">AdminLTE.io</a>.</strong> All rights reserved.
+    <strong>Copyright &copy; 2014-2018.</strong> All rights reserved.
   </footer>
 </div>
 <!-- ./wrapper -->
