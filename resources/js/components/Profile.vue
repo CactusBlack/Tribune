@@ -75,7 +75,8 @@
                                     <label for="inputEmail" class="col-sm-2 control-label">Email</label>
 
                                     <div class="col-sm-12">
-                                    <input type="email" v-model="form.email" class="form-control" id="inputEmail" placeholder="Email"  :class="{ 'is-invalid': form.errors.has('email') }">
+                                    <input type="email" v-model="form.email" class="form-control"
+                                     id="inputEmail" placeholder="Email"  :class="{ 'is-invalid': form.errors.has('email') }">
                                      <has-error :form="form" field="email"></has-error>
                                     </div>
                                 </div>
@@ -104,7 +105,7 @@
                                         v-model="form.password"
                                         class="form-control"
                                         id="password"
-                                        placeholder="Passport"
+                                        placeholder="Password"
                                         :class="{ 'is-invalid': form.errors.has('password') }"
                                     >
                                      <has-error :form="form" field="password"></has-error>
@@ -154,11 +155,14 @@
         methods:{
 
             updateInfo(){
+                this.$Progress.start();
                 this.form.put('api/profile')
                 .then(()=>{
+                    this.$Progress.finish();
 
                 })
                 .catch(()=>{
+                    this.$Progress.fail();
 
                 });
 
@@ -167,15 +171,27 @@
             updateProfile(evt){
                 //console.log('japa')
                 let file = evt.target.files[0];
-               // console.log(file);
                 let reader = new FileReader();
-                //optional
-                reader.onloadend = (file)=>{
+                if(file['size']< 2111775){
+                      reader.onloadend = (file)=>{
                     //console.log('RESULT', reader.result)
                     this.form.photo = reader.result;
                 }
                 //
                 reader.readAsDataURL(file);
+                }else{
+                     Swal.fire({
+                        type: 'warning',
+                      title: 'Oops....',
+                      text:'you are uploading a large file',
+                     }
+                      
+                    )
+
+                }
+                //optional
+                
+              
             }
 
 

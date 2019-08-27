@@ -2082,6 +2082,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -2101,31 +2102,46 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     updateInfo: function updateInfo() {
-      this.form.put('api/profile').then(function () {})["catch"](function () {});
-    },
-    updateProfile: function updateProfile(evt) {
       var _this = this;
 
+      this.$Progress.start();
+      this.form.put('api/profile').then(function () {
+        _this.$Progress.finish();
+      })["catch"](function () {
+        _this.$Progress.fail();
+      });
+    },
+    updateProfile: function updateProfile(evt) {
+      var _this2 = this;
+
       //console.log('japa')
-      var file = evt.target.files[0]; // console.log(file);
+      var file = evt.target.files[0];
+      var reader = new FileReader();
 
-      var reader = new FileReader(); //optional
+      if (file['size'] < 2111775) {
+        reader.onloadend = function (file) {
+          //console.log('RESULT', reader.result)
+          _this2.form.photo = reader.result;
+        }; //
 
-      reader.onloadend = function (file) {
-        //console.log('RESULT', reader.result)
-        _this.form.photo = reader.result;
-      }; //
 
+        reader.readAsDataURL(file);
+      } else {
+        Swal.fire({
+          type: 'warning',
+          title: 'Oops....',
+          text: 'you are uploading a large file'
+        });
+      } //optional
 
-      reader.readAsDataURL(file);
     }
   },
   created: function created() {
-    var _this2 = this;
+    var _this3 = this;
 
     axios.get("api/profile").then(function (_ref) {
       var data = _ref.data;
-      return _this2.form.fill(data);
+      return _this3.form.fill(data);
     });
   }
 });
@@ -56747,7 +56763,7 @@ module.exports = function (css) {
 /***/ (function(module, exports, __webpack_require__) {
 
 /*!
-* sweetalert2 v8.16.2
+* sweetalert2 v8.16.3
 * Released under the MIT License.
 */
 (function (global, factory) {
@@ -59633,7 +59649,7 @@ Object.keys(instanceMethods).forEach(function (key) {
   };
 });
 SweetAlert.DismissReason = DismissReason;
-SweetAlert.version = '8.16.2';
+SweetAlert.version = '8.16.3';
 
 var Swal = SweetAlert;
 Swal["default"] = Swal;
@@ -61111,7 +61127,7 @@ var render = function() {
                             attrs: {
                               type: "password",
                               id: "password",
-                              placeholder: "Passport"
+                              placeholder: "Password"
                             },
                             domProps: { value: _vm.form.password },
                             on: {
@@ -62973,7 +62989,7 @@ function normalizeComponent (
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /*!
-  * vue-router v3.1.1
+  * vue-router v3.1.2
   * (c) 2019 Evan You
   * @license MIT
   */
@@ -64035,9 +64051,9 @@ var Link = {
     var handler = function (e) {
       if (guardEvent(e)) {
         if (this$1.replace) {
-          router.replace(location, null, noop);
+          router.replace(location, noop);
         } else {
-          router.push(location, null, noop);
+          router.push(location, noop);
         }
       }
     };
@@ -65477,14 +65493,9 @@ function getHash () {
 
 function getUrl (path) {
   var href = window.location.href;
-  var hashPos = href.indexOf('#');
-  var base = hashPos > -1 ? href.slice(0, hashPos) : href;
-
-  var searchPos = base.indexOf('?');
-  var query = searchPos > -1 ? base.slice(searchPos) : '';
-  base = query ? base.slice(0, searchPos) : base;
-
-  return (base + "#" + (path + query))
+  var i = href.indexOf('#');
+  var base = i >= 0 ? href.slice(0, i) : href;
+  return (base + "#" + path)
 }
 
 function pushHash (path) {
@@ -65808,7 +65819,7 @@ function createHref (base, fullPath, mode) {
 }
 
 VueRouter.install = install;
-VueRouter.version = '3.1.1';
+VueRouter.version = '3.1.2';
 
 if (inBrowser && window.Vue) {
   window.Vue.use(VueRouter);
