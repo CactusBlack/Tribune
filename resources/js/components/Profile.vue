@@ -9,7 +9,7 @@
                         <h5 class="widget-user-desc">Web Designer</h5>
                     </div>
                     <div class="widget-user-image">
-                        <img class="img-circle" src="" alt="User Avatar">
+                        <img class="img-circle" :src="displayProfilePhoto()" alt="User Avatar">
                     </div>
                     <div class="card-footer">
                         <div class="row">
@@ -147,17 +147,23 @@
             }
           },
 
-
-        mounted() {
-            console.log('Component mounted.')
-        },
-
         methods:{
+
+            displayProfilePhoto(){
+             
+                let photo = (this.form.photo.length > 200) ? this.form.photo : "img/profile/"+ this.form.photo ;
+                return photo;
+
+            },
 
             updateInfo(){
                 this.$Progress.start();
+                if(this.form.password == ''){
+                    this.form.password = undefined;
+                }
                 this.form.put('api/profile')
                 .then(()=>{
+                    fire.$emit('Cafter');
                     this.$Progress.finish();
 
                 })

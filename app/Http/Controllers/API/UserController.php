@@ -72,16 +72,23 @@ class UserController extends Controller
         $this->validate($request,[
             'name' => 'required|string|max:191',
             'email' => 'required|string|email|max:191|unique:users,email,'.$user->id,
-            'password' => 'sometimes',
+            'password' => 'sometimes|required|6',
         ]);
         $currentPhoto = $user->photo;
         if($request -> photo != $currentPhoto){
-
+// assign to image a uniqe name 
             $name=time().'.' . explode('/', explode(':', substr($request->photo, 0, strpos($request->photo, ';')))
             [1])[1];
-
+//save profile image to path
             \Image::make($request->photo)->save(public_path('img/profile/').$name);
             $request->merge(['photo'=>$name]);
+//delete current user photo
+            $photoUpdate= public_path('img/profile/').$currentPhoto;
+
+            if(file_exists($photoUpdate)){
+                @unlink($photoUpdate);
+
+            }
 
 
         } 
