@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <div class="row mt-3">
+        <div class="row mt-3" v-if="$gate.isAdminOrAuthor()">
           <div class="col-md-12">
             <div class="card">
               <div class="card-header">
@@ -23,7 +23,7 @@
                         <th>Date Registered</th>
                         <th>Modify</th>
                   </tr>
-                  <tr v-for="user in users" :key="user.id">
+                  <tr v-for="user in users.data" :key="user.id">
                     <td>{{user.id}}</td>
                     <td>{{user.name}}</td>
                     <td>{{user.email}}</td>
@@ -43,9 +43,19 @@
                 </tbody></table>
               </div>
               <!-- /.card-body -->
+              <div class="card-footer">
+                      
+                      <pagination :data="users"
+                      @pagination-change-page="getResults"></pagination>
+
+              </div>
             </div>
             <!-- /.card -->
           </div>
+        </div>
+
+        <div v-if="!$gate.isAdminOrAuthor()">
+        <page-not-found></page-not-found>
         </div>
 
         <!-- modal -->
@@ -85,6 +95,14 @@
                               class="form-control" :class="{ 'is-invalid': form.errors.has('bio') }"></textarea>
                                      <has-error :form="form" field="bio"></has-error>
                       </div>
+
+                      <div class="form-group">
+                                    <label for="photo" class="col-sm-2 control-label">Photo</label>
+                                    <div class="col-sm-12">
+                                        <input v-model="form.photo" type="string" name="photo" class="form-input">
+                                    </div>
+                      </div>
+
 
                      <div class="form-group">
                         <select name="type" v-model="form.type" id="type" class="form-control" :class="{ 'is-invalid': form.errors.has('type') }">
@@ -136,6 +154,12 @@ import { setInterval } from 'timers';
             }
         },
         methods:{
+         getResults(page = 1) {
+            axios.get('api/user?page=' + page)
+              .then(response => {
+                this.users = response.data;
+              });
+		      },
 
           updateUser(){
             this.$Progress.start();
@@ -195,7 +219,7 @@ import { setInterval } from 'timers';
                     fire.$emit('Cafter');
 
                 }).catch(()=>{
-                  swal("failed!", "Not sure why that happned.","warning");
+                  Swal.fire("Failed!", "Sorry you dont have access to this feature.","warning");
                 });
                  
 
@@ -229,12 +253,25 @@ import { setInterval } from 'timers';
           },
 
           loadUser(){
-            axios.get("api/user").then(({ data }) => (this.users = data.data));
+            if(this.$gate.isAdminOrAuthor()){
 
+                  axios.get("api/user").then(({ data }) => (this.users = data));
+
+            }
           }
 
         },
         mounted() {
+          fire.$on('searchingSon',()=>{
+            let query=this.$parent.search;
+            axios.get('api/findUser?q='+ query)
+            .then((data)=>{
+              this.users=data.data
+
+            })
+            .catch(()=>{
+
+            })})
            this.loadUser();
            fire.$on('Cafter',()=>{this.loadUser()});
            //setInterval(()=>this.loadUser(),3000);

@@ -10,7 +10,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
 
-  <title>AdminLTE 3 | Starter</title>
+  <title>Multi-Purpose | Admin </title>
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <link rel="stylesheet" href="/css/app.css">
 </head>
@@ -27,16 +27,16 @@ scratch. This page gets rid of all links and provides the needed markup only.
     </ul>
 
     <!-- SEARCH FORM -->
-    <form class="form-inline ml-3">
+    
       <div class="input-group input-group-sm">
-        <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
+        <input class="form-control form-control-navbar" @keyup="lookUp" v-model="search" type="search" placeholder="Search" aria-label="Search">
         <div class="input-group-append">
-          <button class="btn btn-navbar" type="submit">
+          <button class="btn btn-navbar" @click="lookUp">
             <i class="fa fa-search"></i>
           </button>
         </div>
       </div>
-    </form>
+  
 
     <!-- Right navbar links -->
   </nav>
@@ -59,7 +59,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
           <img src="./img/man.png" class="img-circle elevation-2" alt="User Image">
         </div>
         <div class="info">
-          <a href="#" class="d-block">{{ Auth::user()->name }}</a>
+          <a href="#" class="d-block">{{ Auth::user()->name }}<p> {{ Auth::user()->type }}</p>
+          </a>
         </div>
       </div>
 
@@ -78,6 +79,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 </p>
             </router-link>
             </li>
+            @can('isAdmin')
           <li class="nav-item has-treeview menu">
             <a href="#" class="nav-link ">
             <i class="fas fa-cog teal"></i>
@@ -101,9 +103,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   <!-- <span class="right badge badge-danger">New</span> -->
                 </p>
               </router-link>
+              </li>
            
             </ul>
           </li>
+          @endcan
          
           </li>
           <li class="nav-item">
@@ -171,6 +175,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
   </footer>
 </div>
 <!-- ./wrapper -->
+
+@auth
+<script>
+window.user = @json(auth()->user())
+</script>
+
+@endauth
 
 <!-- REQUIRED SCRIPTS -->
 

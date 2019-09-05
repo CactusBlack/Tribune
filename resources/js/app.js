@@ -9,6 +9,10 @@ require('./bootstrap');
 window.Vue = require('vue');
 import { Form, HasError, AlertError } from 'vform';
 
+import Gate from "./Gates";
+Vue.prototype.$gate = new Gate(window.user);
+
+
 import Swal from 'sweetalert2';
 window.Swal= Swal;
 
@@ -32,6 +36,7 @@ import Dashboard from './components/Dashboard.vue';
 import Profile from './components/Profile.vue';
 import Developer from './components/Developer.vue';
 import Users from './components/Users.vue';
+import notFound from './components/notFound.vue';
 import VueProgressBar from 'vue-progressbar';
 
 Vue.use(VueProgressBar,{
@@ -64,7 +69,8 @@ const router = new VueRouter({
     { path: '/dashboard', component:Dashboard },
     { path: '/user', component:Profile },
     { path: '/config', component:Users },
-    { path: '/developer', component:Developer }
+    { path: '/developer', component:Developer },
+     { path: '*', component:notFound }
   ]
 });
 
@@ -90,6 +96,12 @@ Vue.component(
   'passport-authorized-clients',
   require('./components/passport/AuthorizedClients.vue').default
 );
+Vue.component(
+  'page-not-found',
+  require('./components/notFound.vue').default
+);
+
+Vue.component('pagination',require('laravel-vue-pagination'));
 
 Vue.component(
   'passport-personal-access-tokens',
@@ -109,5 +121,20 @@ Vue.component('example-component', require('./components/ExampleComponent.vue').
 
 const app = new Vue({
     el: '#app',
-    router
+    router,
+    data:{
+      search:''
+    },
+    methods:{
+
+      lookUp:_.debounce(()=>{
+         fire.$emit('searchingSon');
+      },1500),
+
+      printme(){
+        window.print();
+      }
+      
+      }
+    
 }).$mount('#app')
